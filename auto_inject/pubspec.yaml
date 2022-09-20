@@ -1,0 +1,13 @@
+name: auto_inject
+description: Annotation library for automatic dependency injection
+version: 0.0.1
+
+environment:
+  sdk: '>=2.18.0 <3.0.0'
+
+dependencies:
+  get_it: ^7.2.0
+
+dev_dependencies:
+  lints: ^2.0.0
+  test: ^1.16.0

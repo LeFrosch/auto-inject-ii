@@ -1,0 +1,7 @@
+builders:
+  auto_inject_builder:
+    import: "package:auto_inject_dev/builder.dart"
+    builder_factories: ["autoInjectBuilder"]
+    build_extensions: { ".dart": [".auto.dart"] }
+    auto_apply: none
+    build_to: source

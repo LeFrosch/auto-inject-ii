@@ -1,0 +1,30 @@
+name: auto_inject_dev
+description: Code generator for automatic dependency injection
+version: 0.0.1
+
+publish_to: none
+
+environment:
+  sdk: '>=2.18.0 <3.0.0'
+
+dependencies:
+  auto_inject:
+    path: ../auto_inject
+
+  analyzer: ^5.0.0
+  build: ^2.3.1
+
+  code_builder: ^4.3.0
+  source_gen: ^1.2.3
+
+  glob: ^2.1.0
+  equatable: ^2.0.5
+  collection: ^1.16.0
+  meta: ^1.8.0
+
+dev_dependencies:
+  lints: ^2.0.0
+  test: ^1.16.0
+
+  build_test: ^2.1.5
+  build_resolvers: ^2.0.10
