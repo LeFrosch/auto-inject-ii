@@ -1,0 +1,7 @@
+targets:
+  $default:
+    builders:
+      auto_inject_dev|auto_inject_builder:
+        enabled: true
+        generate_for: 
+          - lib/injection.dart 

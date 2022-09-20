@@ -1,0 +1,23 @@
+name: example
+description: Example for auto_inject :)
+version: 0.0.0
+
+publish_to: none
+
+environment:
+  sdk: '>=2.18.0 <3.0.0'
+
+dependencies:
+  auto_inject:
+    path: ../auto_inject
+
+  get_it: any
+
+dev_dependencies:
+  lints: ^2.0.0
+
+  auto_inject_dev:
+    path: ../auto_inject_dev
+
+  build_runner: any
+
