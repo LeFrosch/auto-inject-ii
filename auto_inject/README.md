@@ -136,7 +136,7 @@ class B {
   B(AutoFactory factory) : factory.getB('Additional information');
 }
 ```
-# Extern modules
+### Extern modules
 To make modules more flexible it is possible to create extern modules. Extern modules are abstract class annotated with `@externModule`. Unlike normal modules they do not provide implementations for the dependencies they provide. An instance that provides these implementations can be passed into the init method. This is useful during testing when mocks should be injected into the test environment. For example:
 ```dart
 @Singleton(env: ['prod'])

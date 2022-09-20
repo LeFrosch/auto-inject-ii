@@ -4,14 +4,11 @@ homepage: https://github.com/LeFrosch/auto-inject-ii
 
 version: 0.0.1
 
-publish_to: none
-
 environment:
   sdk: '>=2.18.0 <3.0.0'
 
 dependencies:
-  auto_inject:
-    path: ../auto_inject
+  auto_inject: ^0.0.1
 
   analyzer: ^5.0.0
   build: ^2.3.1
