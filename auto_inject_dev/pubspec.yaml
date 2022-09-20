@@ -1,5 +1,7 @@
 name: auto_inject_dev
 description: Code generator for automatic dependency injection
+homepage: https://github.com/LeFrosch/auto-inject-ii
+
 version: 0.0.1
 
 publish_to: none

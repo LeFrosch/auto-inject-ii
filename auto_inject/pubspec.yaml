@@ -1,5 +1,7 @@
 name: auto_inject
 description: Annotation library for automatic dependency injection
+homepage: https://github.com/LeFrosch/auto-inject-ii
+
 version: 0.0.1
 
 environment:
