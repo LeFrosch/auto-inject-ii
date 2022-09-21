@@ -11,11 +11,10 @@ import 'package:build_resolvers/build_resolvers.dart';
 import 'package:build_test/build_test.dart';
 
 class CompilationResult {
-  final List<LibraryElement> libraries;
   final LibraryElement library;
   final Context context;
 
-  CompilationResult(this.libraries, this.library) : context = Context(libraries: libraries);
+  CompilationResult(this.context, this.library);
 }
 
 class CompilationError extends Error {
@@ -29,9 +28,9 @@ class CompilationError extends Error {
   }
 }
 
-Future<CompilationResult> compile(String code) async {
+Future<CompilationResult> compile(String code, {bool throwOnCompilationError = true}) async {
   final id = AssetId('test_lib', 'test.dart');
-  final libraries = await resolveSource(
+  final context = await resolveSource(
     '''
     library test_lib;
 
@@ -39,19 +38,19 @@ Future<CompilationResult> compile(String code) async {
 
     $code
     ''',
-    (r) => r.libraries.toList(),
+    (r) async => Context(libraries: await r.libraries.toList(), resolver: r),
     inputId: id,
   );
 
-  final lib = libraries.firstWhere((e) => e.name == id.package);
+  final lib = context.libraries.firstWhere((e) => e.name == id.package);
   final errorsResult = await lib.session.getErrors('/test_lib/test.dart') as ErrorsResult;
   final errors = errorsResult.errors.where((e) => e.severity == Severity.error).toList();
 
-  if (errors.isNotEmpty) {
+  if (errors.isNotEmpty && throwOnCompilationError) {
     throw CompilationError(errors);
   }
 
-  return CompilationResult(libraries, lib);
+  return CompilationResult(context, lib);
 }
 
 String _writeFile(Iterable<String> files, String fileName, String content) {

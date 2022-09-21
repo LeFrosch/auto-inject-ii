@@ -23,7 +23,9 @@ List<DependencyProvider> sort(List<DependencyProvider> input, String env) {
     final providerDependencies = <_Dependency>[];
 
     for (final dependency in provider.dependencies) {
-      if (dependency.assisted) {
+      if (dependency.factory) {
+        continue;
+      } else if (dependency.assisted) {
         providerDependencies.add(_Dependency(null));
       } else if (dependency.group) {
         final group = groups[dependency.target];

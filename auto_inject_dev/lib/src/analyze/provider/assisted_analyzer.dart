@@ -54,8 +54,6 @@ void analyzeAssisted(Context context, List<DependencyProvider> providers) {
   context.registerWriter(GlobalFactoryWriter(assistedProvider));
 
   for (final env in getEnvironments(providers)) {
-    if (!targetMap.entries.any((e) => e.value.entries.any((e) => e.key == env))) continue;
-
     context.registerWriter(EnvFactoryWriter(assistedProvider, env));
   }
 }

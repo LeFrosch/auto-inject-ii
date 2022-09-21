@@ -105,7 +105,7 @@ void main() {
       outputContains([
         'class _GroupProviderGtest extends _i2.GroupProvider<_i3.G>',
         '_GroupProviderGtest(this.getItInstance)',
-        'Iterable<_i3.G> call() => [getItInstance<_i3.A>(), getItInstance<_i3.C>(), ];',
+        'Iterable<_i3.G> call() => [getItInstance<_i3.C>(), getItInstance<_i3.A>(), ];',
         'getItInstance.registerSingleton<_i2.GroupProvider<_i3.G>>(_GroupProviderGtest(getItInstance));',
         'getItInstance.registerFactory<_i3.B>(() => modules[0].b(getItInstance<_i2.GroupProvider<_i3.G>>().call().toList()));',
       ]),

@@ -45,14 +45,14 @@ class LibraryGenerator implements Generator {
   @override
   Future<String?> generate(LibraryReader _, BuildStep buildStep) async {
     final readers = await _readerFromGlob(buildStep, _dartFilesGlob);
-    final context = Context(libraries: await buildStep.resolver.libraries.toList());
+    final context = Context(libraries: await buildStep.resolver.libraries.toList(), resolver: buildStep.resolver);
 
     context.registerWriter(ModuleHelperWriter());
 
-    final classes = _annotatedWith(readers, Injectable).map((e) => analyzeClass(context, e));
-    final modules = _annotatedWith(readers, Module).map((e) => analyzeModule(context, e)).flattened;
+    final classes = await Future.wait(_annotatedWith(readers, Injectable).map((e) => analyzeClass(context, e)));
+    final modules = await Future.wait(_annotatedWith(readers, Module).map((e) => analyzeModule(context, e)));
 
-    final provider = classes.followedBy(modules).toList();
+    final provider = classes.followedBy(modules.flattened).toList();
 
     analyzeGroups(context, provider);
     analyzeAssisted(context, provider);

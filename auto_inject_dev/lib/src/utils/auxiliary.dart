@@ -22,7 +22,7 @@ void checkForAssistedDependencyMismatch(
   }
   if (annotation.group.isNotEmpty) {
     throw InputException(
-      'Injectables with assited fields can not be used in groups',
+      'Injectables with assisted fields can not be used in groups',
       fix: 'Remove assisted fields or remove this Injectable from the group',
       cause: cause,
     );
@@ -36,7 +36,9 @@ Iterable<Expression> resolveDependencies(Reference getItInstance, List<Dependenc
 }
 
 Expression resolveDependency(Reference getItInstance, Dependency dependency) {
-  if (dependency.assisted) {
+  if (dependency.factory) {
+    return getItInstance.call([], {}, [refer(factoryClassName)]);
+  } else if (dependency.assisted) {
     final assistedDependency = dependency as AssistedDependency;
 
     return refer(assistedDependency.name);

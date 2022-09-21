@@ -1,5 +1,5 @@
 import 'package:analyzer/dart/element/element.dart';
-import 'package:analyzer/dart/element/visitor.dart';
+import 'package:collection/collection.dart';
 import 'package:source_gen/source_gen.dart';
 
 import '../../context.dart';
@@ -10,70 +10,57 @@ import '../dependency.dart';
 import '../utils/annotation_analyzer.dart';
 import '../utils/parameter_analyzer.dart';
 
-class _ModuleVisitor extends SimpleElementVisitor<void> {
-  final Context context;
-  final int moduleId;
+@override
+Future<DependencyProvider?> _visitMethod(Context context, int moduleId, MethodElement element) async {
+  final annotationReader = getInjectAnnotation(element);
+  if (annotationReader == null) return null;
 
-  final List<DependencyProvider> providers;
+  final annotation = analyzeAnnotation(context, element.returnType, annotationReader);
+  final dependencies = await analyzeParameter(context, element.parameters).toList();
 
-  _ModuleVisitor(this.context, this.moduleId) : providers = [];
+  checkForAssistedDependencyMismatch(annotation, dependencies, element);
 
-  @override
-  void visitMethodElement(MethodElement element) {
-    final annotationReader = getInjectAnnotation(element);
-    if (annotationReader == null) return;
-
-    final annotation = analyzeAnnotation(context, element.returnType, annotationReader);
-    final dependencies = analyzeParameter(context, element.parameters).toList();
-
-    checkForAssistedDependencyMismatch(annotation, dependencies, element);
-
-    final provider = ModuleDependencyProvider(
-      target: annotation.target,
-      env: annotation.env,
+  return ModuleDependencyProvider(
+    target: annotation.target,
+    env: annotation.env,
+    dependencies: dependencies,
+    groups: annotation.group,
+    moduleId: moduleId,
+    accessorName: element.name,
+    writer: ModuleWriter(
       dependencies: dependencies,
-      groups: annotation.group,
+      methodName: element.name,
       moduleId: moduleId,
-      accessorName: element.name,
-      writer: ModuleWriter(
-        dependencies: dependencies,
-        methodName: element.name,
-        moduleId: moduleId,
-        target: annotation.target,
-        type: annotation.type,
-      ),
-    );
-
-    providers.add(provider);
-  }
-
-  @override
-  void visitPropertyAccessorElement(PropertyAccessorElement element) {
-    final annotationReader = getInjectAnnotation(element);
-    if (annotationReader == null) return;
-
-    final annotation = analyzeAnnotation(context, element.returnType, annotationReader);
-
-    final provider = ModuleDependencyProvider(
       target: annotation.target,
-      env: annotation.env,
-      dependencies: [],
-      groups: annotation.group,
-      moduleId: moduleId,
-      accessorName: element.name,
-      writer: ModulePropertyWriter(
-        propertyName: element.name,
-        moduleId: moduleId,
-        target: annotation.target,
-        type: annotation.type,
-      ),
-    );
-
-    providers.add(provider);
-  }
+      type: annotation.type,
+    ),
+  );
 }
 
-List<DependencyProvider> analyzeModule(Context context, AnnotatedElement annotatedElement) {
+@override
+Future<DependencyProvider?> _visitProperty(Context context, int moduleId, PropertyAccessorElement element) async {
+  final annotationReader = getInjectAnnotation(element);
+  if (annotationReader == null) return null;
+
+  final annotation = analyzeAnnotation(context, element.returnType, annotationReader);
+
+  return ModuleDependencyProvider(
+    target: annotation.target,
+    env: annotation.env,
+    dependencies: [],
+    groups: annotation.group,
+    moduleId: moduleId,
+    accessorName: element.name,
+    writer: ModulePropertyWriter(
+      propertyName: element.name,
+      moduleId: moduleId,
+      target: annotation.target,
+      type: annotation.type,
+    ),
+  );
+}
+
+Future<List<DependencyProvider>> analyzeModule(Context context, AnnotatedElement annotatedElement) async {
   final classElement = annotatedElement.element;
   if (classElement is! ClassElement) {
     throw InputException('Module annotation not used on a class', cause: classElement);
@@ -95,17 +82,18 @@ List<DependencyProvider> analyzeModule(Context context, AnnotatedElement annotat
     );
   }
 
-  final moduleId = context.getNewModuleId();
+  final id = context.getNewModuleId();
 
-  final visitor = _ModuleVisitor(context, moduleId);
-  classElement.visitChildren(visitor);
+  final methods = classElement.methods.map((e) => _visitMethod(context, id, e));
+  final properties = classElement.fields.map((e) => e.getter).whereNotNull().map((e) => _visitProperty(context, id, e));
+  final providers = (await Future.wait(methods.followedBy(properties))).whereNotNull().toList();
 
   final extern = annotatedElement.annotation.read('extern').boolValue;
   context.registerWriter(ModuleClassWriter(
     extern: extern,
-    moduleId: moduleId,
+    moduleId: id,
     source: context.resolveDartType(classElement.thisType),
   ));
 
-  return visitor.providers;
+  return providers;
 }

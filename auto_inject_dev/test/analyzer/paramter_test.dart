@@ -14,7 +14,7 @@ Future<List<Dependency>> resolve(String content) async {
     class Foo {
       $content
     }
-    ''');
+    ''', throwOnCompilationError: false);
 
   final classElement = result.library.getClass('Foo')!;
   final constructor = classElement.unnamedConstructor!;
@@ -62,5 +62,15 @@ void main() {
       ''');
 
     expect(dependencies, equals([isDependency('A', assisted: true)]));
+  });
+
+  test('set factory flag', () async {
+    final dependencies = await resolve('''
+      final AutoFactory factory;
+
+      Foo(this.factory);
+      ''');
+
+    expect(dependencies, equals([isDependency('AutoFactory', factory: true)]));
   });
 }

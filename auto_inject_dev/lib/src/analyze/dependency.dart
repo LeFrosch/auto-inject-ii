@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+import '../utils/global.dart';
 import '../utils/type.dart';
 import '../write/writer.dart';
 
@@ -58,8 +59,10 @@ class Dependency extends Equatable {
 
   bool get assisted => false;
 
+  bool get factory => false;
+
   @override
-  List<Object?> get props => [target, group, assisted];
+  List<Object?> get props => [target, group, assisted, factory];
 }
 
 class GroupDependency extends Dependency {
@@ -84,4 +87,11 @@ class AssistedDependency extends Dependency {
 
   @override
   List<Object?> get props => super.props + [name];
+}
+
+class FactoryDependency extends Dependency {
+  FactoryDependency() : super(TargetType(symbol: factoryClassName, url: null));
+
+  @override
+  bool get factory => true;
 }

@@ -24,7 +24,7 @@ void main() {
     final classElement = result.library.getClass('Foo')!;
     final reader = ConstantReader(classElement.metadata.first.computeConstantValue());
 
-    final provider = analyzeClass(result.context, AnnotatedElement(reader, classElement));
+    final provider = await analyzeClass(result.context, AnnotatedElement(reader, classElement));
 
     expect(provider.dependencies, equals([isDependency('A'), isDependency('B')]));
     expect(provider.env, equals(['test']));

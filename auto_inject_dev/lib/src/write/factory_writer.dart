@@ -17,7 +17,7 @@ Iterable<Parameter> _assistedParameter(Iterable<Dependency> dependencies) {
 
 Code _factoryMethodBody(Reference getItInstance, Reference moduleList, DependencyProvider? provider) {
   if (provider == null) {
-    return refer('Unimplemented').newInstance([literal('Not registered in this env')]).code;
+    return refer('UnimplementedError').newInstance([literal('Not registered in this env')]).thrown.code;
   }
 
   final arguments = provider.dependencies.map((e) => resolveDependency(getItInstance, e));

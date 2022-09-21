@@ -48,7 +48,9 @@ class TypeMatcher extends Matcher {
 
 Matcher isDartType(String type, {bool nullable = false}) => TypeMatcher(type, nullable);
 
-Matcher isDependency(String type, {bool assisted = false, bool group = false}) => isA<Dependency>()
-    .having((v) => v.target, 'target', isDartType(type))
-    .having((v) => v.assisted, 'assisted', equals(assisted))
-    .having((v) => v.group, 'group', equals(group));
+Matcher isDependency(String type, {bool assisted = false, bool group = false, bool factory = false}) =>
+    isA<Dependency>()
+        .having((v) => v.target, 'target', isDartType(type))
+        .having((v) => v.assisted, 'assisted', equals(assisted))
+        .having((v) => v.group, 'group', equals(group))
+        .having((v) => v.factory, 'factory', equals(factory));

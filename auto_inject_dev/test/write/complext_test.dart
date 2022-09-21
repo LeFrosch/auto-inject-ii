@@ -42,6 +42,55 @@ void main() {
     );
   });
 
+  test('inject AutoFactory', () async {
+    final files = {
+      'testA.dart': '''
+        @Injectable(env: ['env1', 'env2'])
+        class A {
+          final String test;
+
+          A(@assisted this.test);
+        }
+      ''',
+      'testB.dart': '''
+        @Singleton(env: ['env1'])
+        class B {
+          final AutoFactory _factory;
+
+          B(this._factory)
+        }
+      ''',
+      'testC.dart': '''
+        @Singleton(env: ['env1'])
+        class C {
+          final AutoFactory factory;
+
+          C(this.factory)
+        }
+      ''',
+      'module.dart': '''
+        @module
+        abstract class Module {
+          @Singleton(env: ['env2'])
+          B b(AutoFactory factory) => B(factory);
+        }
+      ''',
+    };
+
+    final result = await executeBuilder(files: files);
+    expect(
+      result,
+      outputContains([
+        'abstract class AutoFactory { _i2.A getA(String test); }',
+        'class _AutoFactoryenv1 extends AutoFactory',
+        'class _AutoFactoryenv2 extends AutoFactory',
+        '_i2.A getA(String test) => _i2.A(test);',
+        'getItInstance.registerSingleton<_i4.B>(_i4.B(getItInstance<AutoFactory>()));',
+        'getItInstance.registerSingleton<_i4.B>(modules[0].b(getItInstance<AutoFactory>()));',
+      ]),
+    );
+  });
+
   test('extern modules', () async {
     final files = {
       'testA.dart': '''

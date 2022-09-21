@@ -9,7 +9,7 @@ import '../dependency.dart';
 import '../utils/annotation_analyzer.dart';
 import '../utils/parameter_analyzer.dart';
 
-DependencyProvider analyzeClass(Context context, AnnotatedElement annotatedElement) {
+Future<DependencyProvider> analyzeClass(Context context, AnnotatedElement annotatedElement) async {
   final classElement = annotatedElement.element;
   if (classElement is! ClassElement) {
     throw InputException('Injectable annotation not used on a class', cause: classElement);
@@ -32,7 +32,7 @@ DependencyProvider analyzeClass(Context context, AnnotatedElement annotatedEleme
   }
 
   final annotation = analyzeAnnotation(context, classElement.thisType, annotatedElement.annotation);
-  final dependencies = analyzeParameter(context, constructor.parameters).toList();
+  final dependencies = await analyzeParameter(context, constructor.parameters).toList();
 
   checkForAssistedDependencyMismatch(annotation, dependencies, classElement);
 

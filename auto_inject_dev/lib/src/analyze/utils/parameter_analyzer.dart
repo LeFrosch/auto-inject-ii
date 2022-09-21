@@ -1,10 +1,13 @@
+import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:auto_inject/auto_inject.dart';
+import 'package:collection/collection.dart';
 import 'package:source_gen/source_gen.dart';
 
 import '../../context.dart';
 import '../../exceptions.dart';
+import '../../utils/global.dart';
 import '../dependency.dart';
 
 final _assistedTypeChecker = TypeChecker.fromRuntime(AssistedField);
@@ -13,7 +16,38 @@ final _groupTypeChecker = TypeChecker.fromRuntime(GroupField);
 final _listTypeChecker = TypeChecker.fromRuntime(List);
 final _iterableTypeChecker = TypeChecker.fromRuntime(Iterable);
 
-Iterable<Dependency> analyzeParameter(Context context, List<ParameterElement> parameters) sync* {
+Future<Dependency?> _resolveDynamicType(Context context, ParameterElement parameter) async {
+  final ast = await context.resolver.astNodeFor(parameter);
+  if (ast == null) return null;
+
+  final TypeAnnotation? type;
+  if (ast is FieldFormalParameter) {
+    final enclosingClass = ast.thisOrAncestorOfType<ClassDeclaration>();
+    if (enclosingClass == null) return null;
+
+    type = enclosingClass.members
+        .whereType<FieldDeclaration>()
+        .map((e) => e.fields)
+        .where((e) => e.variables.any((e) => e.name2.toString() == parameter.name))
+        .map((e) => e.type)
+        .firstOrNull;
+  } else if (ast is SimpleFormalParameter) {
+    type = ast.type;
+  } else {
+    throw UnexpectedException('Unknown parameter type: ${ast.runtimeType}');
+  }
+  if (type is! NamedType) return null;
+
+  final name = type.name.name;
+
+  if (name == factoryClassName) {
+    return FactoryDependency();
+  }
+
+  return null;
+}
+
+Stream<Dependency> analyzeParameter(Context context, List<ParameterElement> parameters) async* {
   for (final parameter in parameters) {
     if (parameter.isNamed) {
       throw InputException(
@@ -65,7 +99,22 @@ Iterable<Dependency> analyzeParameter(Context context, List<ParameterElement> pa
         name: parameter.name,
       );
     } else {
-      yield Dependency(context.resolveDartType(parameter.type));
+      if (parameter.type.isDynamic) {
+        final dependency = await _resolveDynamicType(context, parameter);
+
+        if (dependency != null) {
+          yield dependency;
+        } else {
+          throw InputException(
+            'Could not resolve type',
+            fix: 'Make sure the type is not dynamic or generated,'
+                'because not all generated types are available when the code generator is running',
+            cause: parameter,
+          );
+        }
+      } else {
+        yield Dependency(context.resolveDartType(parameter.type));
+      }
     }
   }
 }
