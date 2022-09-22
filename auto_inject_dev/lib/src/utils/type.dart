@@ -5,9 +5,11 @@ import 'package:source_gen/source_gen.dart';
 class TargetType extends Equatable {
   final String symbol;
   final String? url;
+  final String? typeCheckerUrl;
   final List<TargetType> genericTypes;
 
-  TargetType({required this.symbol, required this.url, this.genericTypes = const []}) : assert(symbol.isNotEmpty);
+  TargetType({required this.symbol, required this.url, this.typeCheckerUrl, this.genericTypes = const []})
+      : assert(symbol.isNotEmpty);
 
   @override
   List<Object?> get props => [symbol, url, genericTypes];
@@ -23,7 +25,7 @@ class TargetType extends Equatable {
     if (url == null) {
       return TypeChecker.fromUrl('dart:core#$symbol');
     } else {
-      return TypeChecker.fromUrl('$url#$symbol');
+      return TypeChecker.fromUrl('${typeCheckerUrl ?? url}#$symbol');
     }
   }
 

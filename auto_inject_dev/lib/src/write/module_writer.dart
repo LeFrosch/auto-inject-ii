@@ -108,9 +108,11 @@ class ModuleClassWriter extends Writer {
   @override
   Expression? executeInit(Context context, Reference getItInstance, Reference moduleList) {
     if (extern) {
-      return moduleList
-          .index(literal(moduleId))
-          .assign(refer(retrieveExternModuleMethodName).call([moduleList], {}, [source.reference]));
+      return moduleList.index(literal(moduleId)).assign(refer(retrieveExternModuleMethodName).call(
+            [refer(externModulesParameterName)],
+            {},
+            [source.reference],
+          ));
     } else {
       return moduleList.index(literal(moduleId)).assign(refer(getModuleClassName(moduleId)).newInstance([]));
     }

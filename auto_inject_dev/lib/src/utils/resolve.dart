@@ -42,6 +42,7 @@ extension ResolveExtension on Context {
     return TargetType(
       symbol: _resolveDartTypeName(type),
       url: _resolveImport(libraries, type.element2),
+      typeCheckerUrl: type.element2?.librarySource?.uri.toString(),
       genericTypes: _resolveTypeArguments(libraries, type).toList(),
     );
   }

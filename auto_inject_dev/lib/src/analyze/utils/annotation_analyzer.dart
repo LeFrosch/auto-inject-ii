@@ -77,7 +77,7 @@ InjectableAnnotation analyzeAnnotation(Context context, DartType target, Constan
       throw InputException(
         'Target is part of group but is not assignable to group [$group]',
         fix: 'Make sure the target implements the group type',
-        cause: element,
+        cause: target.element2,
       );
     }
   }

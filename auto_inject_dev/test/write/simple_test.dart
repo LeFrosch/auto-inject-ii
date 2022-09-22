@@ -80,9 +80,10 @@ void main() {
       'testA.dart': '''
         class G {}
 
-        class A implements G {}
-        class B {}
-        class C implements G {}
+        class A with G {}
+        class B implements G {}
+        class C extends G {}
+        class D {}
       ''',
       'module.dart': '''
         @module
@@ -90,11 +91,14 @@ void main() {
           @Singleton(env: ['test'], group: [G])
           A get a => A();
 
-          @Injectable(env: ['test'])
-          B b(@group List<G> g) => B();
+          @Singleton(env: ['test'], group: [G])
+          B get b => B();
 
-          @Injectable(env: ['test'], group: [G])
-          C c(A a) => C();
+          @Singleton(env: ['test'], group: [G])
+          C get c => C();
+
+          @Injectable(env: ['test'])
+          D d(@group List<G> g) => D();
         }
       ''',
     };
@@ -105,9 +109,9 @@ void main() {
       outputContains([
         'class _GroupProviderGtest extends _i2.GroupProvider<_i3.G>',
         '_GroupProviderGtest(this.getItInstance)',
-        'Iterable<_i3.G> call() => [getItInstance<_i3.C>(), getItInstance<_i3.A>(), ];',
+        'Iterable<_i3.G> call() => [getItInstance<_i3.A>(), getItInstance<_i3.B>(), getItInstance<_i3.C>(), ];',
         'getItInstance.registerSingleton<_i2.GroupProvider<_i3.G>>(_GroupProviderGtest(getItInstance));',
-        'getItInstance.registerFactory<_i3.B>(() => modules[0].b(getItInstance<_i2.GroupProvider<_i3.G>>().call().toList()));',
+        'getItInstance.registerFactory<_i3.D>(() => modules[0].d(getItInstance<_i2.GroupProvider<_i3.G>>().call().toList()));',
       ]),
     );
   });

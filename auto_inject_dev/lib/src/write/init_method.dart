@@ -41,7 +41,7 @@ Method initMethod(Context context, List<String> envs) {
     final expressions = <Code>[];
 
     // create modules list
-    expressions.add(declareFinal(externModulesParameterName)
+    expressions.add(declareFinal(modulesParameterName)
         .assign(refer('List<dynamic>').newInstanceNamed(
           'filled',
           [literal(context.moduleCount), literalNull],

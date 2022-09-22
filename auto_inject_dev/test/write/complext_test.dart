@@ -119,7 +119,7 @@ void main() {
         '_i1.A getA(String test) => modules[0].a(test);',
         'getItInstance.registerSingleton<AutoFactory>(_AutoFactorytest(getItInstance, modules, ));',
         'getItInstance.registerSingleton<_i3.B>(modules[0].b());',
-        'modules[0] = _retrieveExternModule<_i4.Module>(modules);',
+        'modules[0] = _retrieveExternModule<_i4.Module>(externModules);',
       ]),
     );
   });
