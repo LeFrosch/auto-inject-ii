@@ -7,7 +7,7 @@ class Injectable {
   final Function? dispose;
 
   const Injectable({
-    required this.env,
+    this.env = const ['default'],
     this.as,
     this.dispose,
     this.group = const [],
@@ -18,12 +18,12 @@ class Singleton extends Injectable {
   final bool lazy;
 
   const Singleton({
-    required List<String> env,
-    Type? as,
-    Function? dispose,
-    List<Type> group = const [],
+    super.env,
+    super.as,
+    super.dispose,
+    super.group,
     this.lazy = false,
-  }) : super(env: env, as: as, dispose: dispose, group: group);
+  });
 }
 
 class Module {

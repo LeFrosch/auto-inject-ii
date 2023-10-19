@@ -25,7 +25,7 @@ targets:
       auto_inject_dev|auto_inject_builder:
         enabled: true
         generate_for: 
-          - lib/injection.dart 
+          - lib/main.dart 
 ```
 3. Call the generated `initAutoInject` method to configure a GetIt instance. For example:
 ```dart
@@ -133,7 +133,7 @@ class A {
 class B {
   final A a;
   
-  B(AutoFactory factory) : factory.getB('Additional information');
+  B(AutoFactory factory) : a = factory.getA('Additional information');
 }
 ```
 ### Extern modules

@@ -97,7 +97,7 @@ Future<String> executeBuilder({required Map<String, String> files}) async {
     {AssetId.parse(rootFileAssetId)},
     multiReader,
     writerSpy,
-    AnalyzerResolvers(),
+    AnalyzerResolvers.custom(),
   );
 
   final resultAssetId = '$rootPackage|lib/main.auto.dart';

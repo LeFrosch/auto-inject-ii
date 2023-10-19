@@ -2,14 +2,14 @@ name: auto_inject
 description: Annotation library for automatic dependency injection
 homepage: https://github.com/LeFrosch/auto-inject-ii
 
-version: 0.0.1
+version: 0.0.3
 
 environment:
-  sdk: '>=2.18.0 <3.0.0'
+  sdk: '>=2.18.0 <4.0.0'
 
 dependencies:
-  get_it: ^7.2.0
+  get_it: ^7.6.4
 
 dev_dependencies:
-  lints: ^2.0.0
+  lints: ^3.0.0
   test: ^1.16.0
