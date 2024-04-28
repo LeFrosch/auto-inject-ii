@@ -28,7 +28,7 @@ Future<Dependency?> _resolveDynamicType(Context context, ParameterElement parame
     type = enclosingClass.members
         .whereType<FieldDeclaration>()
         .map((e) => e.fields)
-        .where((e) => e.variables.any((e) => e.name2.toString() == parameter.name))
+        .where((e) => e.variables.any((e) => e.name.toString() == parameter.name))
         .map((e) => e.type)
         .firstOrNull;
   } else if (ast is SimpleFormalParameter) {
@@ -38,7 +38,7 @@ Future<Dependency?> _resolveDynamicType(Context context, ParameterElement parame
   }
   if (type is! NamedType) return null;
 
-  final name = type.name.name;
+  final name = type.name2.toString();
 
   if (name == factoryClassName) {
     return FactoryDependency();
