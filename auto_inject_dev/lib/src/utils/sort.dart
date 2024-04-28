@@ -1,3 +1,5 @@
+import 'package:collection/collection.dart';
+
 import '../analyze/dependency.dart';
 import '../exceptions.dart';
 import 'environment.dart';
@@ -89,10 +91,14 @@ List<DependencyProvider> sort(List<DependencyProvider> input, String env) {
   // If there are any unresolved dependencies left, there either is a circle in
   // the dependency tree or on dependency depends on a assisted source
   if (dependencies.isNotEmpty) {
-    throw InputException(
-      'Could not sort dependencies',
-      fix: 'Make sure all dependencies can be satisfied',
+    final invalidDependencies = dependencies.map(
+      (key, value) => MapEntry(
+        key.target,
+        value.map((e) => e.type).whereNotNull().toList(),
+      ),
     );
+
+    throw SortExcption(invalidDependencies, env: env);
   }
 
   return result;

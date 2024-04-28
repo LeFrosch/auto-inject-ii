@@ -21,6 +21,14 @@ Matcher inOrder(List<String> types) {
   }).toList());
 }
 
+Matcher throwsSortExcpetion(List<String> types) {
+  return throwsA(isA<SortExcption>().having(
+    (v) => v.dependencies.keys,
+    'dependencies',
+    containsAll(types.map((e) => isDartType(e))),
+  ));
+}
+
 Future<List<DependencyProvider>> resolve(String content) async {
   final result = await compile('''
     class G {}
@@ -75,7 +83,7 @@ void main() {
       ''');
 
     expect(sort(dependencies, 'test'), inOrder(['_', '_', 'A']));
-    expect(() => sort(dependencies, 'test2'), throwsA(isA<InputException>()));
+    expect(() => sort(dependencies, 'test2'), throwsSortExcpetion(['A']));
   });
 
   test('sort group dependency', () async {
@@ -112,5 +120,17 @@ void main() {
       ''');
 
     expect(sort(dependencies, 'test'), inOrder(['A', 'C', 'D', 'B']));
+  });
+
+  test('sort circle', () async {
+    final dependencies = await resolve('''
+      @Singleton(env: ['test'])
+      B b(A a) => B();
+
+      @Singleton(env: ['test'])
+      A a(B b) => A();
+      ''');
+
+    expect(() => sort(dependencies, 'test'), throwsSortExcpetion(['A', 'B']));
   });
 }
