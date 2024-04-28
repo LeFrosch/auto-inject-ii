@@ -1,3 +1,12 @@
+## 0.0.4
+
+- Updated dependencies
+- Improved error reporting for circles in dependencies
+
+## 0.0.3
+
+- Updated dependencies
+
 ## 0.0.2
 
 - Fix AutoFactory resolved to dynamic type
