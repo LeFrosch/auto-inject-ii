@@ -34,14 +34,14 @@ class ModuleDependencyProvider extends DependencyProvider {
   final String accessorName;
 
   const ModuleDependencyProvider({
-    required TargetType target,
-    required List<String> env,
-    required List<Dependency> dependencies,
-    required List<TargetType> groups,
-    required RegisterWriter writer,
+    required super.target,
+    required super.env,
+    required super.dependencies,
+    required super.groups,
+    required super.writer,
     required this.moduleId,
     required this.accessorName,
-  }) : super(target: target, env: env, dependencies: dependencies, groups: groups, writer: writer);
+  });
 
   @override
   bool get module => true;
@@ -68,7 +68,7 @@ class Dependency extends Equatable {
 class GroupDependency extends Dependency {
   final bool list;
 
-  const GroupDependency(TargetType target, {required this.list}) : super(target);
+  const GroupDependency(super.target, {required this.list});
 
   @override
   bool get group => true;
@@ -80,7 +80,7 @@ class GroupDependency extends Dependency {
 class AssistedDependency extends Dependency {
   final String name;
 
-  const AssistedDependency(TargetType target, {required this.name}) : super(target);
+  const AssistedDependency(super.target, {required this.name});
 
   @override
   bool get assisted => true;

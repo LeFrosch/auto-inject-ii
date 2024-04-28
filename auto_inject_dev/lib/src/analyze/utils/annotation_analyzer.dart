@@ -51,7 +51,7 @@ ConstantReader? getInjectAnnotation(Element element) {
 }
 
 InjectableAnnotation analyzeAnnotation(Context context, DartType target, ConstantReader reader) {
-  final element = reader.objectValue.type!.element2;
+  final element = reader.objectValue.type!.element;
   if (element == null) {
     throw UnexpectedException('Annotation element was null');
   }
@@ -77,7 +77,7 @@ InjectableAnnotation analyzeAnnotation(Context context, DartType target, Constan
       throw InputException(
         'Target is part of group but is not assignable to group [$group]',
         fix: 'Make sure the target implements the group type',
-        cause: target.element2,
+        cause: target.element,
       );
     }
   }

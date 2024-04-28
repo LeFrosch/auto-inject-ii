@@ -25,7 +25,7 @@ extension ResolveExtension on Context {
   }
 
   String _resolveDartTypeName(DartType type) {
-    return type.element2?.name ?? type.getDisplayString(withNullability: false);
+    return type.element?.name ?? type.getDisplayString(withNullability: false);
   }
 
   Iterable<TargetType> _resolveTypeArguments(List<LibraryElement> libraries, DartType type) sync* {
@@ -41,8 +41,8 @@ extension ResolveExtension on Context {
   TargetType resolveDartType(DartType type) {
     return TargetType(
       symbol: _resolveDartTypeName(type),
-      url: _resolveImport(libraries, type.element2),
-      typeCheckerUrl: type.element2?.librarySource?.uri.toString(),
+      url: _resolveImport(libraries, type.element),
+      typeCheckerUrl: type.element?.librarySource?.uri.toString(),
       genericTypes: _resolveTypeArguments(libraries, type).toList(),
     );
   }

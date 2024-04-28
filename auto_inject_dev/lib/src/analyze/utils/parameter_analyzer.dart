@@ -99,7 +99,7 @@ Stream<Dependency> analyzeParameter(Context context, List<ParameterElement> para
         name: parameter.name,
       );
     } else {
-      if (parameter.type.isDynamic) {
+      if (parameter.type is DynamicType || parameter.type is InvalidType) {
         final dependency = await _resolveDynamicType(context, parameter);
 
         if (dependency != null) {
